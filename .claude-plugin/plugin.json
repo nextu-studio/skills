@@ -1,0 +1,11 @@
+{
+  "name": "nextu-ad-studio",
+  "version": "0.1.0",
+  "description": "Drive Next U (AI ad-creation studio) from your coding agent via the nextu CLI: set up a product, then generate ad copy, product-photo prompts, and video scripts with your own model.",
+  "author": {
+    "name": "Next U",
+    "url": "https://nextu.studio"
+  },
+  "homepage": "https://nextu.studio",
+  "keywords": ["nextu", "advertising", "marketing", "ad-copy", "video-script", "cli"]
+}

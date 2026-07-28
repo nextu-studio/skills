@@ -1,0 +1,19 @@
+{
+  "name": "nextu",
+  "owner": {
+    "name": "Next U",
+    "url": "https://nextu.studio"
+  },
+  "metadata": {
+    "description": "Agent Skills for Next U — the AI ad-creation studio. Drive the full ad pipeline (product setup → copy / product photos / video scripts) from your coding agent via the nextu CLI.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "nextu-ad-studio",
+      "source": "./",
+      "description": "Create Next U ad projects and generate marketing copy, product-photo prompts, and video scripts from your coding agent, using the nextu CLI. Your own model does the generation; Next U handles project state, options, product extraction, local-image upload, and deterministic derivations.",
+      "version": "0.1.0"
+    }
+  ]
+}
