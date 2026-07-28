@@ -2,7 +2,7 @@
 
 Skills that teach a coding agent (Claude Code, Cursor, and other Agent-Skills / MCP-capable clients) to drive **[Next U](https://nextu.studio)**, the AI ad-creation studio, through the `nextu` CLI.
 
-This directory is a self-contained bundle — its contents are the intended root of the public `nextu-ai/skills` repo, and it doubles as a Claude Code **plugin marketplace**.
+This directory is a self-contained bundle — its contents are mirrored to the `madeofroc-arch/skills` repo (manual sync), and it doubles as a Claude Code **plugin marketplace**.
 
 ## What's inside
 
@@ -38,7 +38,7 @@ Get a token from your Next U account under **Settings → CLI**.
 ### 1. Claude Code plugin marketplace (recommended)
 
 ```
-/plugin marketplace add nextu-ai/skills
+/plugin marketplace add madeofroc-arch/skills
 /plugin install nextu-ad-studio@nextu
 ```
 
@@ -47,7 +47,7 @@ Get a token from your Next U account under **Settings → CLI**.
 ### 2. `npx skills add` (Agent-Skills tooling)
 
 ```bash
-npx skills add nextu-ai/skills
+npx skills add madeofroc-arch/skills
 ```
 
 ### 3. Manual copy
