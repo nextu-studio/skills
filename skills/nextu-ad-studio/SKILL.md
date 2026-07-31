@@ -1,6 +1,6 @@
 ---
 name: nextu-ad-studio
-description: "Create advertising end-to-end with Next U (nextu.studio) from a coding agent — ad copy, product-photo prompts, video scripts, AND the actual media (product/person/scene images, per-scene video, background music) plus the final composed master video — driven by the `nextu` CLI. Use when the user wants to make ads or marketing content for a product, drive the Next U ad pipeline, generate ad images/video/music, turn a product URL or local photos into a finished ad, or otherwise use the `nextu` command. Two halves — the authoring half (copy/prompts/scripts) is FREE, your own model writes it; the production half (images/video/music/compose) runs through Next U's paid pipeline and deducts the account's Next U credits (never your own API keys — a logged-in Next U member with credits is required). Bilingual (defaults to Traditional Chinese; pass `--language en` for English)."
+description: "Create advertising end-to-end with Next U (nextu.studio) from a coding agent — ad copy, product-photo prompts, video scripts, AND the actual media (product/person/scene images, per-scene video, background music) plus the final composed master video — driven by the `nextu` CLI. Use when the user wants to make ads or marketing content for a product, drive the Next U ad pipeline, generate ad images/video/music, turn a product URL or local photos into a finished ad, or otherwise use the `nextu` command. Two halves — the authoring half (copy/prompts/scripts) is FREE, your own model writes it; the production half (images/video/music/compose) runs through Next U's paid pipeline and deducts the account's Next U credits (never your own API keys — a logged-in Next U member with credits is required). Four output languages (defaults to Traditional Chinese; pass `--language en|ja|ko` for English / Japanese / Korean)."
 ---
 
 # Next U Ad Studio (via the `nextu` CLI)
@@ -26,9 +26,18 @@ The pipeline splits in two. Know which half you're in:
 
 ## Setup (once)
 
+**You need a Next U account and a token before anything below works.** `nextu login` only *stores*
+a token — it cannot create one. Tell the user to get theirs like this:
+
+> 1. Sign in at **<https://nextu.studio>** (register there if they don't have an account yet).
+> 2. Open the **Studio** workspace → **Settings** (設定) → the **CLI** tab.
+> 3. Name the token and press generate. **The value is shown once and never again** — copy it now.
+
+Then, in the terminal:
+
 ```bash
 npx nextu-cli --help             # or: npm i -g nextu-cli
-nextu login                           # prompts for the token; input is NOT echoed
+nextu login                           # paste the token at the prompt; input is NOT echoed
 nextu status                          # confirm site / token / endpoint is armed
 ```
 
@@ -91,7 +100,11 @@ Steps you can generate (all go through the same `prepare` → generate → `save
 
 Marketing concept (s6_copy / s7_script only): `prepare` shows the applied concept and the options for the category. To choose one: `nextu prepare <id> s6_copy --concept "Social Proof"` (or a ConceptKey like `core1`), then generate again.
 
-Language: append `--language en` for English output (default is Traditional Chinese).
+Language: **four output languages** — `--language en` (English), `--language ja` (Japanese),
+`--language ko` (Korean); default is `zh-TW` (Traditional Chinese). This is the *generated content's*
+language, independent of the CLI's own messages. **Match it to the user's market** — if they're
+writing a Japanese ad, pass `--language ja`; don't leave it on the zh-TW default and hand them
+Chinese copy.
 
 Vision steps attach product/spokesperson reference images — add `--save-images <dir>` to write them to disk, or read them from the `--json` `images[]` (base64) to feed your own vision model.
 
@@ -119,24 +132,42 @@ nextu plan <id>                          # ordered steps + estimated total cost 
 
 All generation is **asynchronous**: a `generate-*` / `compose` command returns a `jobId` immediately (after charging), then you poll for the result. The result also writes back into the project.
 
+### Polling cadence — sleep first, then poll
+
+**These jobs take one to two minutes each. Sleep for the expected duration before your first poll,
+then poll every ~15s.** Do not poll every few seconds: you would spend 30+ tool calls waiting out a
+single image, and a 5-scene video ad is ~20 minutes of wall clock — hundreds of calls, all of them
+burning the user's context to learn nothing.
+
+| Job | Sleep before first poll |
+|---|---|
+| `generate-image` (any slot) | **110s** |
+| `generate-video` (one scene) | **65s** |
+| `generate-music` | **90s** |
+| `compose` | **100s** |
+
+These are production p80s — ~4 in 5 jobs are done when you first look. Longer settings (higher
+resolution, longer duration) run slower, so treat them as a floor, not a promise. If a job is still
+running after ~10 minutes, report that to the user rather than polling forever.
+
 ```bash
 # Images — slots: 9 product · 11 person · 13 scene · 112 outfit-changed · 15 per-scene start frame
 nextu generate-image <id> 9              # → jobId + cost + balance
-nextu generation <id> <jobId>            # poll until "✅ 完成" (done); re-run every few seconds
+sleep 110 && nextu generation <id> <jobId>   # then every ~15s until "✅ 完成" (done)
 nextu generate-image <id> 15 --scene 0   # step 15 needs --scene N (0-based), one per storyboard scene
 
 # Music (S19) — needs `derive s18_music` first
 nextu generate-music <id>
-nextu generation <id> <jobId>
+sleep 90 && nextu generation <id> <jobId>
 
 # Video (S17) — needs `derive s16_video_prompts` first. Generate scenes IN ORDER 0,1,2…
 nextu generate-video <id> 0              # oneShot/unboxing auto-chain the previous scene's last frame — order matters
-nextu generation <id> <jobId>            # poll until done before starting the next scene
+sleep 65 && nextu generation <id> <jobId>    # must reach done before starting the next scene
 
 # Final master (S22) — free (compute only, no credits). Best after `derive s21_edit`.
 nextu derive <id> s21_edit               # scene order / subtitles / BGM pick / auto-compose flags
 nextu compose <id>                       # → jobId
-nextu get-compose <id> <jobId>           # poll until "✅ 母片完成" → playable/downloadable master URL
+sleep 100 && nextu get-compose <id> <jobId>  # "✅ 母片完成" → playable/downloadable master URL
 ```
 
 **Prompts and reference images come from the authoring half** — `generate-image` for slot 11 uses the S10 person prompt, slot 9 uses the S8 product prompt, slot 15 uses the S14 starting-frame prompt, etc. So the order is: finish authoring (prompts + derives) → then production. `plan` lays out the exact sequence for the project.

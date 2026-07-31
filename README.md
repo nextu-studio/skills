@@ -31,7 +31,8 @@ nextu status
 In CI, pipe the token instead of passing it as an argument (`echo "$NEXTU_TOKEN" | nextu login --token-stdin`) —
 a command-line argument lands in shell history, `ps` output and CI logs.
 
-Get a token from your Next U account under **Settings → CLI**.
+Get a token at **<https://nextu.studio>** → sign in → **Studio** → **Settings (設定)** → the **CLI** tab
+→ generate. The value is shown **once** — copy it before closing the dialog.
 
 ## Install the skill (pick one)
 
@@ -64,7 +65,13 @@ Any Agent-Skills-aware client that reads `SKILL.md` from a skills directory will
 
 ## What the skill does
 
-Next U never runs a paid model — **your agent's model does the generation**. The skill teaches the loop `nextu prepare` (get prompt + save-contract) → generate with your own model → `nextu save`, plus project setup (product URL extraction, local-image upload, valid-option lookup) and the deterministic video pipeline (`nextu derive`). It is deliberately anti-drift: the exact output format for each step comes from the save-contract that `prepare` prints at runtime, so the skill stays correct even as formats evolve server-side.
+The pipeline has two halves and the skill drives both.
+
+**Authoring (free)** — Next U never runs a paid model here; **your agent's model does the generation**. The loop is `nextu prepare` (get prompt + save-contract) → generate with your own model → `nextu save`, plus project setup (product URL extraction, local-image upload, valid-option lookup) and the deterministic video pipeline (`nextu derive`). Output comes in four languages (zh-TW / en / ja / ko).
+
+**Production (paid)** — the actual media: product / person / scene images, per-scene video, background music, and the final composed master (`nextu plan` → `generate-image` / `generate-video` / `generate-music` → `compose`). These run Next U's own vendor pipeline and deduct the account's Next U credits; there is no bring-your-own-API-key.
+
+It is deliberately anti-drift: the exact output format for each step comes from the save-contract that `prepare` prints at runtime, so the skill stays correct even as formats evolve server-side.
 
 ## License
 

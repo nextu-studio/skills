@@ -2,6 +2,12 @@
 
 For **video** projects. One true generation step (the script), one optional scene-photo step, then deterministic derivations. Only the script uses your model; everything downstream is parsed from it server-side, so it matches the website exactly.
 
+> **Scope:** this file covers the **authoring half only** — the prompts and the storyboard. It is
+> free and no media exists at the end of it. Rendering the actual frames, scene videos, music and
+> the final master is the **production half**, and the CLI does all of it (`nextu plan` →
+> `generate-image` / `generate-video` / `generate-music` → `compose`). See **SKILL.md §6**.
+> Don't finish this file and send the user to the website — they don't have to leave the terminal.
+
 ## 0. Prerequisites
 
 - Project `output` = `video` (`nextu create … --output video` or `nextu set-inputs <id> --output video`).
@@ -71,7 +77,14 @@ nextu derive    "$id" s16_video_prompts
 nextu derive    "$id" s18_music
 ```
 
-The project — script, scenes, frame prompts, motion prompts, music — is now populated and synced to the user's Next U account, ready for them to render in the web app.
+The project — script, scenes, frame prompts, motion prompts, music — is now populated and synced to the user's Next U account. **This is the halfway point, not the finish line:** nothing has been rendered yet. Continue into the production half (SKILL.md §6), which the CLI runs end to end:
+
+```bash
+nextu plan "$id"                         # ordered steps + estimated credits + balance (no charge)
+# → generate-image (start frames) → generate-video (scenes, in order) → generate-music → compose
+```
+
+The user can also open the web app and render there instead — but they don't have to.
 
 ## Person & outfit prompts (S10 / S11A) — deterministic derives
 
@@ -87,7 +100,7 @@ nextu derive <id> s11a_outfit                            # simple (clothing only
 nextu derive <id> s11a_outfit --accessories              #   auto-derived from category / uploads, or forced with the flag
 ```
 
-`s10` mirrors the autopilot exactly; `s11a` mirrors the manual S11A step (which the autopilot deliberately skips because it needs user-supplied outfit references). Both write the prompt back to the project (`personPhotoPrompt` / `outfitPrompt`); the actual image generation (S11 / S11B) happens in the web app.
+`s10` mirrors the autopilot exactly; `s11a` mirrors the manual S11A step (which the autopilot deliberately skips because it needs user-supplied outfit references). Both write the prompt back to the project (`personPhotoPrompt` / `outfitPrompt`) — they produce **prompts, not pictures**. Rendering those images is the paid production half, and the CLI does it: `nextu generate-image <id> 11` (person, S11) and `nextu generate-image <id> 112` (outfit-changed, S11B).
 
 ## Notes
 

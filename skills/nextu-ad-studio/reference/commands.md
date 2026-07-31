@@ -12,7 +12,7 @@ Precedence for site/token: `--flag` > env (`NEXTU_BASE_URL` / `NEXTU_API_TOKEN`)
 | `nextu login --token-stdin` | Same, but reads the token from stdin — use this in CI: `echo "$NEXTU_TOKEN" \| nextu login --token-stdin`. |
 | `nextu logout` | Delete the local config. |
 | `nextu status` | Show current site / token (masked) / health / whether the MCP endpoint is armed, and where each value came from. |
-| `nextu health` | Public site health (backend configured? FX fresh?). No token needed. |
+| `nextu health` | Public site health — whether the backend is actually **reachable** (a live probe, not a config check) and whether FX rates are fresh. No token needed. |
 
 ## Read
 
@@ -41,7 +41,7 @@ Precedence for site/token: `--flag` > env (`NEXTU_BASE_URL` / `NEXTU_API_TOKEN`)
 
 | Command | Purpose |
 |---|---|
-| `nextu prepare <id> <step> [--language zh-TW\|en] [--concept <c>] [--save-images <dir>]` | Get the generation prompt + save-contract for a step, without calling any paid model. `step` ∈ `s6_copy` \| `s7_script` \| `s8_product_prompt` \| `s12_scene_photo`. `--concept` (s6_copy/s7_script only) picks a marketing concept by ConceptKey or name. `--save-images` writes attached reference images to a folder. |
+| `nextu prepare <id> <step> [--language zh-TW\|en\|ja\|ko] [--concept <c>] [--save-images <dir>]` | Get the generation prompt + save-contract for a step, without calling any paid model. `step` ∈ `s6_copy` \| `s7_script` \| `s8_product_prompt` \| `s12_scene_photo`. `--language` sets the **generated content's** language (four supported; default `zh-TW`) — match it to the user's market. `--concept` (s6_copy/s7_script only) picks a marketing concept by ConceptKey or name. `--save-images` writes attached reference images to a folder. |
 | `nextu save <id> <step> <result>` | Write your generated result back. Provide the result as the 3rd argument, or `--file <path>`, or `--stdin`. `step` must match the `prepare` step. Format must satisfy the contract `prepare` printed (422 lists any violations). |
 
 Steps: `s6_copy` = ad copy (JSON) · `s8_product_prompt` = product-photo prompt (text) · `s12_scene_photo` = scene-photo prompt (text; needs a saved `s7_script`) · `s7_script` = video script (JSON envelope). Concept applies to `s6_copy` and `s7_script`.
@@ -66,6 +66,8 @@ Step notes for `derive`:
 ## Generate media (PAID — deducts the account's Next U credits)
 
 Asynchronous: each returns a `jobId` (after charging); poll for the result, which writes back into the project. Every response reports `cost` (credits spent this call; 0 on an idempotent re-hit) and `balance`.
+
+**Cadence — sleep the expected duration before the first poll, then poll every ~15s.** Production p80s: `generate-image` **110s** · `generate-video` (one scene) **65s** · `generate-music` **90s** · `compose` **100s**. Higher resolution / longer duration runs slower, so treat these as a floor. Polling every few seconds turns one image into 30+ tool calls and a 5-scene ad into hundreds.
 
 | Command | Purpose |
 |---|---|
