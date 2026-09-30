@@ -5,15 +5,15 @@
     "url": "https://nextu.studio"
   },
   "metadata": {
-    "description": "Agent Skills for Next U — the AI ad-creation studio. Drive the full ad pipeline (product setup → copy / product photos / video scripts) from your coding agent via the nextu CLI.",
-    "version": "0.1.0"
+    "description": "Agent Skills for Next U — the AI ad-creation studio. Prepare, estimate and produce ads through a connected remote MCP server or the local nextu CLI.",
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "nextu-ad-studio",
       "source": "./",
-      "description": "Create Next U ad projects and generate marketing copy, product-photo prompts, and video scripts from your coding agent, using the nextu CLI. Your own model does the generation; Next U handles project state, options, product extraction, local-image upload, and deterministic derivations.",
-      "version": "0.1.0"
+      "description": "Includes nextu-ad-mcp for connected remote tools and nextu-ad-studio for terminal agents. Your model writes copy and prompts; Next U handles projects, estimates, paid media generation and free final composition.",
+      "version": "0.2.0"
     }
   ]
 }

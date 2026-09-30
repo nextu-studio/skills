@@ -1,7 +1,7 @@
 {
   "name": "nextu-ad-studio",
-  "version": "0.1.0",
-  "description": "Drive Next U (AI ad-creation studio) from your coding agent via the nextu CLI: set up a product, then generate ad copy, product-photo prompts, and video scripts with your own model.",
+  "version": "0.2.0",
+  "description": "Create NEXT U ads through connected remote MCP tools or a local nextu CLI. Review estimates before paid media generation; final composition costs zero credits.",
   "author": {
     "name": "Next U",
     "url": "https://nextu.studio"

@@ -16,7 +16,7 @@ For **video** projects. One true generation step (the script), one optional scen
 
 ```bash
 nextu set-settings <id> \
-  --video-model grok \          # grok | seedance
+  --video-model grok \          # grok | grok15 | seedance | seedance25
   --direction imagePromo \      # oneShot | imagePromo | unboxing
   --video-ar 9:16 \
   --video-res 1080p \

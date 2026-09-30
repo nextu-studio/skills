@@ -28,7 +28,7 @@ Precedence for site/token: `--flag` > env (`NEXTU_BASE_URL` / `NEXTU_API_TOKEN`)
 |---|---|
 | `nextu create [--title <t>] [--output copy\|photo\|video]` | Create a project; prints its id. |
 | `nextu set-inputs <id> [flags]` | S1–S5 inputs. Flags: `--output copy\|photo\|video`, `--category <N>`, `--name <s>`, `--desc <s>`, `--kol` / `--no-kol`, `--kol-name <s>`, `--kol-style <s>`, `--kol-notes <s>`. Only the flags you pass are updated. |
-| `nextu set-settings <id> [flags]` | S5.5 generation settings. Flags: `--video-model grok\|seedance`, `--direction oneShot\|imagePromo\|unboxing`, `--unboxing-person` / `--no-unboxing-person`, `--image-ar <r>`, `--video-ar <r>`, `--image-res <r>`, `--video-res <r>`, `--duration <N>` (or a value that clears it), `--mode manual\|auto`. |
+| `nextu set-settings <id> [flags]` | S5.5 generation settings. Flags: `--video-model grok\|grok15\|seedance\|seedance25`, `--direction oneShot\|imagePromo\|unboxing`, `--unboxing-person` / `--no-unboxing-person`, `--image-ar <r>`, `--video-ar <r>`, `--image-res <r>`, `--video-res <r>`, `--duration <N>` (or a value that clears it), `--mode manual\|auto`. |
 
 ## Bring in a product
 

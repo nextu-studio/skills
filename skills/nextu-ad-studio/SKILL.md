@@ -1,18 +1,23 @@
 ---
 name: nextu-ad-studio
-description: "Create advertising end-to-end with Next U (nextu.studio) from a coding agent — ad copy, product-photo prompts, video scripts, AND the actual media (product/person/scene images, per-scene video, background music) plus the final composed master video — driven by the `nextu` CLI. Use when the user wants to make ads or marketing content for a product, drive the Next U ad pipeline, generate ad images/video/music, turn a product URL or local photos into a finished ad, or otherwise use the `nextu` command. Two halves — the authoring half (copy/prompts/scripts) is FREE, your own model writes it; the production half (images/video/music/compose) runs through Next U's paid pipeline and deducts the account's Next U credits (never your own API keys — a logged-in Next U member with credits is required). Four output languages (defaults to Traditional Chinese; pass `--language en|ja|ko` for English / Japanese / Korean)."
+description: "Create product ads through the local nextu CLI in a coding agent or ChatGPT Work environment with terminal access. Use for CLI-driven copy, product photos, scripts, media generation and local-image upload. Requires an installed CLI and NEXT U login; for a connected remote MCP workflow use nextu-ad-mcp."
 ---
 
 # Next U Ad Studio (via the `nextu` CLI)
 
 Next U is an AI ad-creation studio. This skill drives it from the terminal with the `nextu` CLI.
 
+This CLI workflow requires terminal access, the installed CLI and a local NEXT U
+login. In an ordinary ChatGPT conversation with remote NEXT U tools, use the
+`nextu-ad-mcp` skill instead. Installing a skill does not authorize the account.
+
 ## Two halves — free authoring, paid production
 
 The pipeline splits in two. Know which half you're in:
 
 - **Authoring half (FREE)** — copy, prompts, scripts, and deterministic derivations. **Next U never calls a paid model here; YOU generate with your own model** (`prepare` → generate → `save`), and `derive` runs Next U's own parser. Zero credits.
-- **Production half (PAID)** — the actual media: images (`generate-image`), music (`generate-music`), per-scene video (`generate-video`), and the final `compose`. These run through **Next U's own paid vendor pipeline and deduct the account's Next U credits.** There is no "bring your own API key" — the user must be a logged-in Next U member with credits. Each paid command reports its cost and the remaining balance; insufficient balance returns a clear error. **Run `nextu plan <id>` first to see the ordered steps and the total estimated cost before spending.**
+- **Media generation (PAID)** — images (`generate-image`), music (`generate-music`) and per-scene video (`generate-video`) run through **Next U's own vendor pipeline**. Credits are deducted when generation starts; failures are refunded automatically. There is no "bring your own API key" — the user needs a logged-in Next U account with credits. Each paid command reports cost and remaining balance. **Run `nextu plan <id>` before spending**; resolve missing prerequisites and warnings instead of treating an incomplete estimate as zero.
+- **Final composition (FREE)** — `compose` joins existing scene videos, music and subtitles with internal FFmpeg processing. It deducts **0 Next U credits**, but queues work and creates an output. Credit unit value is not the price of a finished ad.
 
 ## The one idea to understand first (authoring half)
 
@@ -122,7 +127,7 @@ nextu derive  <id> s18_music             # background-music prompt
 
 `derive` runs Next U's own parser server-side over the saved script — its output matches the website exactly, so there is nothing for you to generate and no drift.
 
-### 6. Production — generate the media (PAID, deducts the account's credits)
+### 6. Production — paid media generation, free final composition
 
 This half runs Next U's paid vendor pipeline. **Always `nextu plan <id>` first** to see the ordered steps + total estimated cost + whether the balance is sufficient.
 
@@ -130,7 +135,7 @@ This half runs Next U's paid vendor pipeline. **Always `nextu plan <id>` first**
 nextu plan <id>                          # ordered steps + estimated total cost + balance (no charge)
 ```
 
-All generation is **asynchronous**: a `generate-*` / `compose` command returns a `jobId` immediately (after charging), then you poll for the result. The result also writes back into the project.
+Media generation and composition are **asynchronous**: a command returns a `jobId`, then you poll for the result. Only `generate-*` commands deduct credits at the start; failed generations are refunded automatically. `compose` never deducts credits. Results are saved into the account's project/library.
 
 ### Polling cadence — sleep first, then poll
 

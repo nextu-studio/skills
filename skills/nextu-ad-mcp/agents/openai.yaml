@@ -1,0 +1,11 @@
+interface:
+  display_name: "NEXT U MCP Ads"
+  short_description: "Create product ads through connected NEXT U MCP tools"
+  default_prompt: "Use $nextu-ad-mcp to prepare my product ad, estimate media costs and retrieve the result through NEXT U."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "nextu"
+      description: "NEXT U remote ad-creation tools with account OAuth"
+      transport: "streamable_http"
+      url: "https://nextu.studio/api/mcp"

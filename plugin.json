@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "nextu-ad-studio",
+  "version": "0.2.0",
+  "description": "Create ads with NEXT U through a connected remote MCP server or a local nextu CLI. Review estimates before paid media generation.",
+  "author": { "name": "Next U", "url": "https://nextu.studio" },
+  "homepage": "https://nextu.studio/skill",
+  "repository": "https://github.com/nextu-studio/skills",
+  "license": "MIT"
+}
